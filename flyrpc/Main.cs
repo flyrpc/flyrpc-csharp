@@ -15,6 +15,19 @@ namespace flyrpc
 
 		public static void Main (string[] args)
 		{
+			object foo = (int x) => x + x;
+			Func<int, int> f = (int x) => x + x;
+			Action<int> fa = (int x) =>
+				Console.WriteLine("int {0}", x);
+			fa(10);
+			Object t = f;
+			Type tf = f.GetType();//typeof(f);
+			Type tt = t.GetType();// typeof(t);
+			Type[] ta = tt.GetGenericArguments();
+			//Type[] tp = tf.GetGenericParameterConstraints();
+			Type tc = tt.GetGenericTypeDefinition();
+			Console.WriteLine("f(2): {0}", f(2));
+			Console.WriteLine("{0} {1} {2}", ta[0].Name, ta[1].Name, tc.Name);
             Protocol protocol = new Protocol("127.0.0.1", 5555);
             protocol.OnPacket += OnPacket;
             // ProtoClient client = new ProtoClient("127.0.0.1", 6666);
