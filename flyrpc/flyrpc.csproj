@@ -35,10 +35,20 @@
   <ItemGroup>
     <Compile Include="MyClass.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="EventSocket.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="ProtoClient.cs" />
     <Compile Include="Protocol.cs" />
+    <Compile Include="..\proto-gen\ProtocolParser.cs">
+      <Link>msg\ProtocolParser.cs</Link>
+    </Compile>
+    <Compile Include="..\proto-gen\msg.Serializer.cs">
+      <Link>msg\msg.Serializer.cs</Link>
+    </Compile>
+    <Compile Include="..\proto-gen\msg.cs">
+      <Link>msg\msg.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="msg\" />
+  </ItemGroup>
 </Project>

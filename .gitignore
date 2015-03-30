@@ -1,1 +1,4 @@
 tools
+*.swp
+test.exe
+test.exe.mdb

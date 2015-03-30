@@ -78,6 +78,7 @@ namespace flyrpc
 			byte[] bytes = this.br.ReadBytes(p.length);
 			if(bytes == null || bytes.Length < p.length) return null;
 //            Console.WriteLine("readed bytes:" + bytes);
+			p.msgBuff = bytes;
             return p;
         }
 

@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
+using Msg;
+
 namespace flyrpc
 {
 	class MainClass
@@ -47,6 +49,9 @@ namespace flyrpc
 
         public static void OnPacket(Packet packet) {
             Console.WriteLine("Packet {0} {1} {2} {3} {4}", packet.flag, packet.cmd, packet.seq, packet.length, packet.msgBuff);
+			Console.WriteLine("msgBuff {0} {1} {2}", packet.msgBuff[0], packet.msgBuff[1], packet.msgBuff[2]);
+			Hello hello = Hello.Deserialize(packet.msgBuff);
+			Console.WriteLine("Deserilized {0} {1} {2}", hello, hello.Id, hello.Name);
         }
 
         public static void OnData(byte[] bytes, int readed) {
