@@ -1,0 +1,6 @@
+package msg;
+
+message Hello {
+    optional int32 id = 1;
+    optional string name = 2;
+}

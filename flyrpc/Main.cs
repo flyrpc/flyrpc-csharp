@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace imsglib
+namespace flyrpc
 {
 	class MainClass
 	{
@@ -13,7 +13,9 @@ namespace imsglib
 
 		public static void Main (string[] args)
 		{
-            ProtoClient client = new ProtoClient("127.0.0.1", 6666);
+            Protocol protocol = new Protocol("127.0.0.1", 5555);
+            protocol.OnPacket += OnPacket;
+            // ProtoClient client = new ProtoClient("127.0.0.1", 6666);
 			/* Console.WriteLine ("Hello World!"); */
 			/* TcpClient client = new TcpClient(); */
             /* client.Connect ("127.0.0.1", 6666); */
@@ -40,7 +42,12 @@ namespace imsglib
                     w.Write("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
                     w.Flush();
                     */
+            // Thread.Sleep(1000);
 		}
+
+        public static void OnPacket(Packet packet) {
+            Console.WriteLine("Packet {0} {1} {2} {3} {4}", packet.flag, packet.cmd, packet.seq, packet.length, packet.msgBuff);
+        }
 
         public static void OnData(byte[] bytes, int readed) {
             Console.WriteLine("readed");
