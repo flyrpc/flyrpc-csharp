@@ -15,11 +15,15 @@ namespace flyrpc
 
 		public static void Main (string[] args)
 		{
-			object foo = (int x) => x + x;
 			Func<int, int> f = (int x) => x + x;
 			Action<int> fa = (int x) =>
 				Console.WriteLine("int {0}", x);
+			Action<Hello> fb = (Hello x) =>
+				Console.WriteLine("Hello int {0}", x.Id);
+            object fo = fb;
 			fa(10);
+            Hello h = new Hello();
+            ((Action<Hello>)fo)(h);
 			Object t = f;
 			Type tf = f.GetType();//typeof(f);
 			Type tt = t.GetType();// typeof(t);
@@ -28,8 +32,10 @@ namespace flyrpc
 			Type tc = tt.GetGenericTypeDefinition();
 			Console.WriteLine("f(2): {0}", f(2));
 			Console.WriteLine("{0} {1} {2}", ta[0].Name, ta[1].Name, tc.Name);
-            Protocol protocol = new Protocol("127.0.0.1", 5555);
-            protocol.OnPacket += OnPacket;
+
+            TestRouter();
+            TestProtocol();
+
             // ProtoClient client = new ProtoClient("127.0.0.1", 6666);
 			/* Console.WriteLine ("Hello World!"); */
 			/* TcpClient client = new TcpClient(); */
@@ -59,6 +65,22 @@ namespace flyrpc
                     */
             // Thread.Sleep(1000);
 		}
+
+        public static void TestProtocol() {
+            Protocol protocol = new Protocol("127.0.0.1", 5555);
+            protocol.OnPacket += OnPacket;
+            Thread.Sleep(500);
+            System.Environment.Exit(0);
+        }
+
+        public static void TestRouter() {
+            Router router = new Router();
+            router.AddRoute(1, (Action<Hello>)HelloHandler);
+        }
+
+        public static void HelloHandler(Hello h) {
+            Console.WriteLine("On hello handler: {0}", h.Id);
+        }
 
         public static void OnPacket(Packet packet) {
             Console.WriteLine("Packet {0} {1} {2} {3} {4}", packet.flag, packet.cmd, packet.seq, packet.length, packet.msgBuff);

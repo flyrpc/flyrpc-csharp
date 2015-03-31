@@ -9,19 +9,20 @@
 // ------------------------------------------------------------------------------
 using System;
 using System.Collections;
+using System.Collections.Generic;
 namespace flyrpc
 {
 	public class Router
 	{
-		private Dictionary<byte, Action<object> messageHandlers;
+		private Dictionary<byte, Object> messageHandlers;
 		public Router ()
 		{
-
+            this.messageHandlers = new Dictionary<byte, Object>();
 		}
 
-		public void OnMessage(byte cmd, Action<object> handler)
+		public void AddRoute(byte cmd, object handler)
 		{
-
+            //this.messageHandlers.Add(cmd, handler);
 		}
 	}
 }
