@@ -14,7 +14,7 @@ namespace flyrpc
 
 	public class Packet {
 		public byte flag;
-		public byte cmd;
+		public UInt16 cmd;
 		public byte seq;
 		public UInt16 length;
 		public byte[] msgBuff;
@@ -70,7 +70,7 @@ namespace flyrpc
 
 			Packet p = new Packet();
 			p.flag = this.br.ReadByte();
-			p.cmd = this.br.ReadByte();
+			p.cmd = Helpers.ReadUInt16BE(this.br);
 			p.seq = this.br.ReadByte();
 			p.length = Helpers.ReadUInt16BE(this.br);
             Console.WriteLine("read len {0}", p.length);

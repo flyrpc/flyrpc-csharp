@@ -75,10 +75,11 @@ namespace flyrpc
 
         public static void TestRouter() {
             Router router = new Router();
-            router.AddRoute(1, (Action<Hello>)HelloHandler);
+            router.AddRoute(1, HelloHandler);
         }
 
-        public static void HelloHandler(Hello h) {
+        public static void HelloHandler(byte[] buff) {
+			Hello h = Hello.Deserialize(buff);
             Console.WriteLine("On hello handler: {0}", h.Id);
         }
 

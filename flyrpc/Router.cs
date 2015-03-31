@@ -14,15 +14,22 @@ namespace flyrpc
 {
 	public class Router
 	{
-		private Dictionary<byte, Object> messageHandlers;
+		private Dictionary<UInt16, Action<byte[]>> messageHandlers;
 		public Router ()
 		{
-            this.messageHandlers = new Dictionary<byte, Object>();
+            this.messageHandlers = new Dictionary<UInt16, Action<byte[]>>();
 		}
 
-		public void AddRoute(byte cmd, object handler)
+		public void AddRoute(UInt16 cmd, Action<byte[]> handler)
 		{
-            //this.messageHandlers.Add(cmd, handler);
+            this.messageHandlers.Add(cmd, handler);
+		}
+
+		public void emitPacket(Packet pkt) {
+			Action<byte[]> action = messageHandlers[pkt.cmd];
+			if (action != null) {
+				action(pkt.msgBuff);
+			}
 		}
 	}
 }

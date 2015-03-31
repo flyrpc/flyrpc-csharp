@@ -47,6 +47,7 @@
       <Link>msg\msg.cs</Link>
     </Compile>
     <Compile Include="Router.cs" />
+    <Compile Include="Client.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
