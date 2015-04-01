@@ -33,6 +33,7 @@ namespace flyrpc
 		private NetworkStream stream;
 		private BufferedStream bfs;
 		private BinaryReader br;
+		private BinaryWriter bw;
 		private Thread thread;
 
         public event Action<Packet> OnPacket;
@@ -54,6 +55,7 @@ namespace flyrpc
 			this.stream = this.client.GetStream();
 			this.bfs = new BufferedStream(this.stream);
 			this.br = new BinaryReader(this.bfs);
+            this.bw = new BinaryWriter(this.stream);
             Console.WriteLine("read packet");
             Packet packet;
 			while((packet = this.ReadPacket()) != null) {
@@ -73,13 +75,24 @@ namespace flyrpc
 			p.cmd = Helpers.ReadUInt16BE(this.br);
 			p.seq = this.br.ReadByte();
 			p.length = Helpers.ReadUInt16BE(this.br);
-            Console.WriteLine("read len {0}", p.length);
 
 			byte[] bytes = this.br.ReadBytes(p.length);
 			if(bytes == null || bytes.Length < p.length) return null;
 //            Console.WriteLine("readed bytes:" + bytes);
 			p.msgBuff = bytes;
             return p;
+        }
+
+        public void SendPacket(Packet p) {
+            this.bw.Write(p.flag);
+            Helpers.WriteUInt16BE(this.bw, p.cmd);
+            this.bw.Write(p.seq);
+            if(p.msgBuff.Length > 65535) {
+                throw new Exception("Message buffer too long");
+            }
+            UInt16 len = (UInt16)p.msgBuff.Length;
+            Helpers.WriteUInt16BE(this.bw, len);
+            this.bw.Write(p.msgBuff);
         }
 
 /*
@@ -109,6 +122,12 @@ namespace flyrpc
             Array.Reverse(b);
             return b;
         }
+
+        public static void WriteUInt16BE(this BinaryWriter binWtr, UInt16 val)
+        {
+            binWtr.Write(BitConverter.GetBytes(val).Reverse());
+        }
+
 
         public static UInt16 ReadUInt16BE(this BinaryReader binRdr)
         {

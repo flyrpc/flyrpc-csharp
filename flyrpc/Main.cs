@@ -33,8 +33,9 @@ namespace flyrpc
 			Console.WriteLine("f(2): {0}", f(2));
 			Console.WriteLine("{0} {1} {2}", ta[0].Name, ta[1].Name, tc.Name);
 
-            TestRouter();
-            TestProtocol();
+            // TestRouter();
+            // TestProtocol();
+            TestClient();
 
             // ProtoClient client = new ProtoClient("127.0.0.1", 6666);
 			/* Console.WriteLine ("Hello World!"); */
@@ -73,12 +74,30 @@ namespace flyrpc
             System.Environment.Exit(0);
         }
 
+        public static void TestClient() {
+            Client client  = new Client("127.0.0.1", 5555);
+            client.OnMessage(6, OnMessage6);
+            client.OnMessage(1, OnMessage1);
+        }
+
+        public static void OnMessage6(Client client, byte[] buff) {
+            Hello h = Hello.Deserialize(buff);
+            Console.WriteLine("client on message 6 h.Id {0}", h.Id);
+        }
+
+        public static void OnMessage1(Client client, byte[] buff) {
+            Hello h = Hello.Deserialize(buff);
+            Console.WriteLine("client on message 1: {0}", h.Id);
+            h.Id = 444;
+            client.SendMessage(5, Hello.SerializeToBytes(h));
+        }
+
         public static void TestRouter() {
             Router router = new Router();
             router.AddRoute(1, HelloHandler);
         }
 
-        public static void HelloHandler(byte[] buff) {
+        public static void HelloHandler(Client client, byte[] buff) {
 			Hello h = Hello.Deserialize(buff);
             Console.WriteLine("On hello handler: {0}", h.Id);
         }
