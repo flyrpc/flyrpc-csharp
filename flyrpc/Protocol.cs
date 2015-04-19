@@ -22,6 +22,19 @@ namespace flyrpc
 
 	public class Protocol
 	{
+		public const byte SubTypeBits = 0xb0;
+
+		// sub types
+		public const byte TypeRPC = 0xb0;
+		public const byte TypePing = 0x80;
+		public const byte TypeHello = 0x40;
+		public const byte TypeMQ = 0x00;
+
+		// ping flags
+		public const byte FlagPing = 0x01;
+		public const byte FlagPong = 0x02;
+
+		// rpc flags
 		public const byte FlagRPC = 0x80;
 		public const byte FlagResp = 0x40;
 		public const byte FlagError = 0x20;

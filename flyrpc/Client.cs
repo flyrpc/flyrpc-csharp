@@ -27,7 +27,7 @@ namespace flyrpc
 
         public void SendMessage(UInt16 cmd, byte[] buffer) {
             Packet p = new Packet();
-            p.flag = 0;// Protocol.FlagRPC | Protocol.Resp;//
+			p.flag = Protocol.TypeRPC;
             p.cmd = cmd;
             p.seq = nextSeq ++;
             p.msgBuff = buffer;
