@@ -36,7 +36,6 @@
     <Compile Include="MyClass.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Protocol.cs" />
     <Compile Include="..\proto-gen\ProtocolParser.cs">
       <Link>msg\ProtocolParser.cs</Link>
     </Compile>
@@ -46,11 +45,13 @@
     <Compile Include="..\proto-gen\msg.cs">
       <Link>msg\msg.cs</Link>
     </Compile>
-    <Compile Include="Router.cs" />
-    <Compile Include="Client.cs" />
+    <Compile Include="flyrpc\Client.cs" />
+    <Compile Include="flyrpc\Protocol.cs" />
+    <Compile Include="flyrpc\Router.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="msg\" />
+    <Folder Include="flyrpc\" />
   </ItemGroup>
 </Project>

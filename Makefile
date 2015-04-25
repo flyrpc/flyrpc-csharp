@@ -15,10 +15,10 @@ clean:
 	rm test.exe
 	rm -rf proto-gen
 
-test.exe: flyrpc/*.cs proto-gen/msg.cs
+test.exe: flyrpc/*.cs flyrpc/**/*.cs proto-gen/msg.cs
 	#@cp proto-fix/*.cs proto-gen/
 	#@mcs -r:$(UNITY_DLL) -out:test.exe flyrpc/*.cs
-	@mcs -g -out:test.exe flyrpc/*.cs proto-gen/*.cs
+	@mcs -g -out:test.exe flyrpc/*.cs flyrpc/**/*.cs proto-gen/*.cs
 
 tools/CodeGenerator.exe:
 	@-mkdir tools
