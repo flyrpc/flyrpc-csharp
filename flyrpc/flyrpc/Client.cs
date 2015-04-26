@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,12 +10,14 @@ namespace flyrpc
 		private Router router;
         private byte nextSeq = 0;
 		private Dictionary<int, Action<Client, int, byte[]>> callbacks;
+		private Dictionary<int, Timer> timers;
 
         public Client(string host, int port) {
 			router = new Router();
 			protocol = new Protocol(host, port);
 			protocol.OnPacket += HandleOnPacket;
 			callbacks = new Dictionary<int, Action<Client, int, byte[]>>();
+			timers = new Dictionary<int, Timer>();
         }
 
         void HandleOnPacket (Packet pkt) {
@@ -24,6 +27,11 @@ namespace flyrpc
 				int cbid = (pkt.cmd << 16) | pkt.seq;
 				if(callbacks[cbid] != null) {
 					callbacks[cbid](this, 0, pkt.msgBuff);
+					callbacks.Remove(cbid);
+					if(timers[cbid] != null) {
+						timers[cbid].Dispose();
+						timers.Remove(cbid);
+					}
 				}
 				return;
 			}
@@ -58,6 +66,12 @@ namespace flyrpc
 			byte seq = this.SendPacket(Protocol.TypeRPC | Protocol.FlagReq, cmd, buffer);
 			int cbid = cmd << 16 | seq;
 			callbacks[cbid] = callback;
+			timers[cbid] = new Timer(new TimerCallback((object obj) => {
+				callback(this, 1000, null);
+				timers[cbid].Dispose();
+				callbacks.Remove(cbid);
+				timers.Remove(cbid);
+			}), cbid, 5000, Timeout.Infinite);
 		}
     }
 }

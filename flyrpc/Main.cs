@@ -93,9 +93,13 @@ namespace flyrpc
 			Hello hello = new Hello();
 			hello.Id = 100;
 			client.SendMessage(1, Hello.SerializeToBytes(hello), OnCallback); 
+			client.SendMessage(100, Hello.SerializeToBytes(hello), OnCallback);
         }
 
 		public static void OnCallback(Client client, int errcode, byte[] buffer) {
+			if(errcode != 0) {
+				Console.WriteLine("error ............. error code", errcode);
+			}
 			Hello hello = Hello.Deserialize(buffer);
 			if(hello.Id != 101) {
 				Console.WriteLine("error .............. Id should be 101");
