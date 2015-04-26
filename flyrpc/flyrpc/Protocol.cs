@@ -35,10 +35,10 @@ namespace flyrpc
 		public const byte FlagPong = 0x02;
 
 		// rpc flags
-		public const byte FlagRPC = 0x80;
-		public const byte FlagResp = 0x40;
-		public const byte FlagError = 0x20;
-		public const byte FlagBuffer = 0x10;
+		public const byte FlagReq = 0x01;
+		public const byte FlagResp = 0x02;
+		public const byte FlagError = 0x04;
+		public const byte FlagBuffer = 0x08;
 
 		private string host;
 		private int port;

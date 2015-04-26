@@ -14,7 +14,8 @@ namespace flyrpc
         }
 
         void HandleOnPacket (Packet pkt) {
-			if((pkt.flag & Protocol.FlagRPC) != 0 &&
+			byte subType = (byte)(pkt.flag & Protocol.SubTypeBits);
+			if(subType == Protocol.TypeRPC &&
 			   (pkt.flag & Protocol.FlagResp) != 0) {
                 // FIXME HandleResponse
 			}
