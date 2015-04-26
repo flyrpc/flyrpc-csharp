@@ -90,7 +90,19 @@ namespace flyrpc
             Console.WriteLine("client on message 1: {0}", h.Id);
             h.Id = 444;
             client.SendMessage(5, Hello.SerializeToBytes(h));
+			Hello hello = new Hello();
+			hello.Id = 100;
+			client.SendMessage(1, Hello.SerializeToBytes(hello), OnCallback); 
         }
+
+		public static void OnCallback(Client client, int errcode, byte[] buffer) {
+			Hello hello = Hello.Deserialize(buffer);
+			if(hello.Id != 101) {
+				Console.WriteLine("error .............. Id should be 101");
+			} else {
+				Console.WriteLine("success ............. Id is 101");
+			}
+		}
 
         public static void TestRouter() {
             Router router = new Router();
