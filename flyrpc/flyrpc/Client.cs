@@ -42,7 +42,7 @@ namespace flyrpc
 			router.AddRoute(cmd, handler);
 		}
 
-		public byte SendPacket(byte flag, UInt16 cmd, byte[] buffer) {
+		protected byte SendPacket(byte flag, UInt16 cmd, byte[] buffer) {
             Packet p = new Packet();
 			p.flag = flag;
             p.cmd = cmd;
