@@ -68,21 +68,39 @@ namespace flyrpc
 		}
 
         public static void TestProtocol() {
-            Protocol protocol = new Protocol("127.0.0.1", 5555);
+            Protocol protocol = new Protocol();
+			protocol.Connect("127.0.0.1", 5555);
             protocol.OnPacket += OnPacket;
             Thread.Sleep(500);
             System.Environment.Exit(0);
         }
 
         public static void TestClient() {
-            Client client  = new Client("127.0.0.1", 5555);
+            Client client  = new Client();
+			client.Connect("127.0.0.1", 5555);
+			client.OnConnect += OnConnect;
+			client.OnCommand += OnCommand;
+			client.OnClose += OnClose;
             client.OnMessage(6, OnMessage6);
             client.OnMessage(1, OnMessage1);
         }
 
+		public static void OnConnect() {
+			Console.WriteLine("Connected");
+		}
+
+		public static void OnClose() {
+			Console.WriteLine("Closed");
+		}
+
+		public static void OnCommand(ushort cmd, byte[] bytes) {
+			Console.WriteLine("Cmd ", cmd, "bytes", bytes);
+		}
+
         public static void OnMessage6(Client client, byte[] buff) {
             Hello h = Hello.Deserialize(buff);
             Console.WriteLine("client on message 6 h.Id {0}", h.Id);
+			client.Close();
         }
 
         public static void OnMessage1(Client client, byte[] buff) {

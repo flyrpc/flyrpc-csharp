@@ -11,16 +11,29 @@ namespace flyrpc
         private byte nextSeq = 0;
 		private Dictionary<int, Action<Client, int, byte[]>> callbacks;
 		private Dictionary<int, Timer> timers;
+		public event Action OnConnect;
+		public event Action<UInt16,byte[]> OnCommand;
+		public event Action OnClose;
 
-        public Client(string host, int port) {
+        public Client() {
 			router = new Router();
-			protocol = new Protocol(host, port);
+			protocol = new Protocol();
+			protocol.OnConnect += ()=> OnConnect();
+			protocol.OnClose += ()=> OnClose();
 			protocol.OnPacket += HandleOnPacket;
 			callbacks = new Dictionary<int, Action<Client, int, byte[]>>();
 			timers = new Dictionary<int, Timer>();
         }
 
-        void HandleOnPacket (Packet pkt) {
+		public void Connect(string host, int port) {
+			protocol.Connect(host, port);
+		}
+
+		public void Close() {
+			protocol.Close();
+		}
+
+        protected void HandleOnPacket (Packet pkt) {
 			byte subType = (byte)(pkt.flag & Protocol.SubTypeBits);
 			if(subType == Protocol.TypeRPC &&
 			   (pkt.flag & Protocol.FlagResp) != 0) {
@@ -35,6 +48,7 @@ namespace flyrpc
 				}
 				return;
 			}
+			OnCommand(pkt.cmd, pkt.msgBuff);
             router.emitPacket(this, pkt);
         }
 

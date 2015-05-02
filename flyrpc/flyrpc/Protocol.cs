@@ -43,6 +43,7 @@ namespace flyrpc
 		private string host;
 		private int port;
 		private TcpClient client;
+		private bool running;
 		private NetworkStream stream;
 		private BufferedStream bfs;
 		private BinaryReader br;
@@ -50,11 +51,15 @@ namespace flyrpc
 		private Thread thread;
 
         public event Action<Packet> OnPacket;
+		public event Action OnConnect;
         public event Action OnClose;
         public event Action OnError;
 
-		public Protocol (string host, int port)
+		public Protocol ()
 		{
+		}
+
+		public void Connect(string host, int port) {
 			this.host = host;
 			this.port = port;
 			this.thread = new Thread(Start);
@@ -62,19 +67,23 @@ namespace flyrpc
 		}
 
 		private void Start() {
-            Console.WriteLine("connect");
+            Console.WriteLine("Protocol Connect");
 			this.client = new TcpClient(this.host, this.port);
-            Console.WriteLine("connected");
+            Console.WriteLine("Protocol Connected");
+			this.running = true;
+			this.OnConnect();
 			this.stream = this.client.GetStream();
 			this.bfs = new BufferedStream(this.stream);
 			this.br = new BinaryReader(this.bfs);
             this.bw = new BinaryWriter(this.stream);
-            Console.WriteLine("read packet");
+            Console.WriteLine("Protocol Read packet");
             Packet packet;
-			while((packet = this.ReadPacket()) != null) {
+			while(running && (packet = this.ReadPacket()) != null) {
                 Console.WriteLine("sss: flag {0} cmd {1} seq {2} len {3}: buff {4}", packet.flag, packet.cmd, packet.seq, packet.length, packet.msgBuff);
                 this.OnPacket(packet);
 			}
+			Console.WriteLine("Protocol Closed");
+			this.OnClose();
 		}
 
         private Packet ReadPacket() {
@@ -124,7 +133,12 @@ namespace flyrpc
 */
 
         public void Close() {
-        }
+			if(this.client != null) {
+				Console.WriteLine("Closing");
+				this.client.Close();
+			}
+			running = false;
+		}
 	}
 
     public static class Helpers
