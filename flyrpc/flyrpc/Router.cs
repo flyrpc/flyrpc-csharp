@@ -10,25 +10,28 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 namespace flyrpc
 {
 	public class Router
 	{
 		private Dictionary<UInt16, Action<Client, byte[]>> messageHandlers;
+
 		public Router ()
 		{
-            this.messageHandlers = new Dictionary<UInt16, Action<Client, byte[]>>();
+			this.messageHandlers = new Dictionary<UInt16, Action<Client, byte[]>> ();
 		}
 
-		public void AddRoute(UInt16 cmd, Action<Client, byte[]> handler)
+		public void AddRoute (UInt16 cmd, Action<Client, byte[]> handler)
 		{
-            this.messageHandlers.Add(cmd, handler);
+			this.messageHandlers.Add (cmd, handler);
 		}
 
-		public void emitPacket(Client client, Packet pkt) {
-			Action<Client, byte[]> action = messageHandlers[pkt.cmd];
+		public void emitPacket (Client client, Packet pkt)
+		{
+			Action<Client, byte[]> action = messageHandlers [pkt.cmd];
 			if (action != null) {
-                action(client, pkt.msgBuff);
+				action (client, pkt.msgBuff);
 			}
 		}
 	}
