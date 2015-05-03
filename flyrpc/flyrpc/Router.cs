@@ -29,9 +29,9 @@ namespace flyrpc
 
 		public void emitPacket (Client client, Packet pkt)
 		{
-			Action<Client, byte[]> action = messageHandlers [pkt.cmd];
-			if (action != null) {
-				action (client, pkt.msgBuff);
+			Action<Client, byte[]> action;
+			if(messageHandlers.TryGetValue(pkt.cmd, out action)) {
+				action(client, pkt.msgBuff);
 			}
 		}
 	}
