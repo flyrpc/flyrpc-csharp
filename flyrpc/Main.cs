@@ -94,13 +94,12 @@ namespace flyrpc
 		}
 
 		public static void OnCommand(ushort cmd, byte[] bytes) {
-			Console.WriteLine("Cmd ", cmd, "bytes", bytes);
+			Console.WriteLine("Cmd {0} bytes {1}", cmd, bytes.ToString());
 		}
 
         public static void OnMessage6(Client client, byte[] buff) {
             Hello h = Hello.Deserialize(buff);
             Console.WriteLine("client on message 6 h.Id {0}", h.Id);
-			client.Close();
         }
 
         public static void OnMessage1(Client client, byte[] buff) {
@@ -124,6 +123,7 @@ namespace flyrpc
 			} else {
 				Console.WriteLine("success ............. Id is 101");
 			}
+			client.Close();
 		}
 
         public static void TestRouter() {
