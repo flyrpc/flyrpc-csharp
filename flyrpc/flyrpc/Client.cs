@@ -45,7 +45,18 @@ namespace flyrpc
 				(pkt.flag & Protocol.FlagResp) != 0) {
 				int cbid = (pkt.cmd << 16) | pkt.seq;
 				if (callbacks [cbid] != null) {
-					callbacks [cbid] (this, 0, pkt.msgBuff);
+					if ((pkt.flag & Protocol.FlagError ) != 0) {
+						// bigendian bytes to uint32
+						uint x = BitConverter.ToUInt32(pkt.msgBuff, 0);
+						// x = swapEndianness(x);
+						x = ((x & 0x000000ff) << 24) +  // First byte
+							((x & 0x0000ff00) << 8) +   // Second byte
+								((x & 0x00ff0000) >> 8) +   // Third byte
+								((x & 0xff000000) >> 24);   // Fourth byte
+						callbacks[cbid](this, (int)x, null);
+					} else {
+					    callbacks [cbid] (this, 0, pkt.msgBuff);
+					}
 					callbacks.Remove (cbid);
 					if (timers [cbid] != null) {
 						timers [cbid].Dispose ();
